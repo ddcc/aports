@@ -19,10 +19,10 @@ _config=${config:-config-lts.${CARCH}}
 install=
 source="https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/linux-$_kernver.tar.xz
 	0002-powerpc-config-defang-gcc-check-for-stack-protector-.patch
-
 	0007-pci-hotplug-declare-IDT-bridge-as-hotpluggabl-bridge.patch
 	0008-pci-spr2803-quirk-to-fix-class-ID.patch
 	ampere-mt-jade.patch
+	futex-wait-multiple.patch
 
 	config-lts.aarch64
 	config-lts.armv7
@@ -122,7 +122,7 @@ build() {
 	export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 	for i in $_flavors; do
 		cd "$srcdir"/build-$i.$CARCH
-		make ARCH="$_carch" CC="${CC:-gcc}" \
+		make -j16 ARCH="$_carch" CC="${CC:-gcc}" \
 			KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-Alpine"
 	done
 }
@@ -230,6 +230,7 @@ d19365fe94431008768c96a2c88955652f70b6df6677457ee55ee95246a64fdd2c6fed9b3bef37c2
 ca5aafac37e0b5f3fcbaf801e12f98beb58ffaf1d8c88f76caff22b059831869b4094e7fdcb6d6860422d6b2d036e072caff460e1feb84bd04d10740ad56265b  0007-pci-hotplug-declare-IDT-bridge-as-hotpluggabl-bridge.patch
 cbe85cf34e8420c91d2276c2d2aa0ab5023af68e57a1fa613f073f16a76766c67f585eda71c28f232bd0625e0dc8275a9eddc95f49409205dc0dbcc28c9fac1c  0008-pci-spr2803-quirk-to-fix-class-ID.patch
 16b2d5b0255b37075ba894fc797673d633395907ce0b93400c5a8bd05b512b5cd040b91000fa41f9240d42afc664a69206597d1e3f754a1aa64b9be21a67f5c6  ampere-mt-jade.patch
+7fdba923f3f15c9f5dbf6bc1d31ccc5004d606f97f3686ff91a63b80a7c3e60d73ba89ea35c19503920106e0f2d496ee449e17cbb84ecf4680810c970d873087  futex-wait-multiple.patch
 0997277f83a82fa41722a246f29eccf6660a5846f7bca5f08e61f668ea6e5b223531272c3ef6b97c7990ad92e826be9aa07d8efd1d453f1fbbd3cfe9d7d2bf5c  config-lts.aarch64
 8c9746919125ed22f29c6f29923fad1b35e75636ac2f0d64889bbe7a9a2efe3292529703916cbe82b43fc9336b93b66b7ade98ed029d105f0a8c891f2667ce39  config-lts.armv7
 f9a26097e89763e0de0c2b27a3c603c029f645170227086ce5c5fb91812a97a81f4baea8513f625845e5140581a35f2708d85502162d3fec187e34032662bf86  config-lts.x86
